@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>用户管理</title>
+		<link rel="stylesheet" href="layui/css/layui.css">
+		<link rel="stylesheet" href="css/admin.css">
+		<link rel="stylesheet" href="css/scroll.css">
+		<script src="layui/layui.all.js"></script>
+		<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	</head>
+
+	<body class="layui-layout-body" style="overflow-y: scroll;">
+		<div class="layui-layout layui-layout-admin">
+			<div class="layui-header">
+				<div class="layui-logo">
+					管理后台
+				</div>
+				<!-- 头部区域（可配合layui已有的水平导航） -->
+				<ul class="layui-nav layui-layout-left">
+					<li class="layui-nav-item">
+						<a href="">系统总览</a>
+					</li>
+					<li class="layui-nav-item layui-this">
+						<a href="">数据管理</a>
+					</li>
+					<li class="layui-nav-item">
+						<a href="">数据导入与维护</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="layui-side layui-bg-black">
+				<div class="layui-side-scroll">
+					<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+					<ul class="layui-nav layui-nav-tree">
+						<li class="layui-nav-item layui-nav-itemed">
+							<a class="" href="javascript:;">报表管理</a>
+							<dl class="layui-nav-child">
+								<dd class="layui-this">
+									<a href="admin_user.html">用户管理</a>
+								</dd>
+								<dd>
+									<a href="admin_payall.html">酬金管理</a>
+								</dd>
+								<dd>
+									<a href="javascript:;">酬金详单管理</a>
+								</dd>
+							</dl>
+						</li>
+						<li class="layui-nav-item">
+							<a href="javascript:;">数据追加</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="layui-body">
+				
+				<div id="contaner">
+					
+					<div class="layui-collapse">
+						
+						<div class="layui-colla-item">
+							<h2 class="layui-colla-title">添加用户</h2>
+							<div class="layui-colla-content">
+								
+								<form class="layui-form" id="add-form">
+									
+									<div class="layui-input-inline">
+										<input placeholder="新增姓名" class="layui-input" id="add_name" name="name" type="text">
+									</div>
+									<div class="layui-input-inline">
+										<input placeholder="新增手机号" class="layui-input" id="add_phone"  name="phone" type="text">
+									</div>
+									<div class="layui-input-inline">
+										<input placeholder="新增密码" class="layui-input" id="add_password"  name="password" type="text">
+									</div>
+									<div class="layui-input-inline">
+										<select id="add_mod" name="mod" lay-verify="">
+											<option value="">新增选择身份</option>
+											<option value="user">普通用户</option>
+											<option value="admin">管理员</option>
+										</select>
+									</div>
+									<div class="layui-inline">
+										<button class="layui-btn" type="button" data-type="reload" id="add">添加</button>
+									</div>
+									<div class="layui-inline">
+										<button class="layui-btn" type="button" data-type="reload" id="rest">清空</button>
+									</div>
+									
+								</form>
+								
+							</div>
+						</div>
+						<div class="layui-colla-item">
+							<h2 class="layui-colla-title">查找用户</h2>
+							<div class="layui-colla-content layui-show">
+								
+								<div class="layui-inline">
+									<input placeholder="按姓名查找（模糊）" class="layui-input" id="ser_name" autocomplete="off">
+								</div>
+								<button class="layui-btn" data-type="reload" id="search">搜索</button>
+								
+							</div>
+						</div>
+						
+					</div>
+					
+							
+							
+					<table id="demo" lay-filter="test"></table>	
+					
+					<script src="layui/layui.all.js"></script>
+					
+					<script type="text/html" id="bartest">
+						<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+						<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+					</script>
+					
+				</div>	
+				
+			</div>
+
+			<div class="layui-footer">
+				<!-- 底部固定区域 -->
+				© layui.com - 底部固定区域
+			</div>
+		</div>
+
+		
+		<script>
+			$('#add').click(function(){
+				if(($('#add_name').val() == "")||($('#add_phone').val() == "")||($('#add_password').val() == "")||($('#add_mod').val() == "")){
+					layer.msg("不允许留空");
+				}else{
+					$.ajax({
+						type:"post",
+						url:"php/admin_user.php",
+						cache:false, 
+						data:$("#add-form").serialize()+"&type=admin_add",
+						dataType:'text',
+						success:function(data){
+							if(data == "success"){
+								layer.msg("添加成功");
+								table.reload('testreload', {
+									page: {
+										curr: 1 //重新从第 1 页开始
+									}
+								});
+							}else if(data == "fail"){
+								layer.msg("添加失败，请重试");
+							}
+						}
+					});
+				}
+			})
+			
+			$('#rest').click(function(){
+				$(':input','#add-form').val(''); 
+				$(':selection','#add-form').val(''); 
+			})
+			
+			
+			var table = layui.table;	
+			table.render({
+				elem: '#demo'
+				,id: 'testreload'
+				,cellMinWidth: 80
+				,height: 'full-310'
+				,url: 'php/admin_user.php?type=admin_get' //数据接口
+				,page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+				    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+				      //,curr: 5 //设定初始在第 5 页
+				    ,groups: 3 //只显示 1 个连续页码
+				    ,first: false //不显示首页
+				    ,last: false //不显示尾页
+				    ,limit: 50
+				    ,limits:[50,100,150,200]
+		   		}	
+				,cols: [[ //表头
+					{field: 'id', title: 'ID', width:60 ,sort: true, fixed: 'left'}
+					,{field: 'name', title: '姓名', edit: 'text'}
+					,{field: 'phone', title: '手机号', edit: 'text'}
+					,{field: 'password', title: '密码', edit: 'text'} 
+					,{field: 'mode', title: '身份（user为普通用户，admin为管理员）', edit: 'text'}
+					,{fixed: 'right', title: '操作', width:140 ,align:'center', toolbar: '#bartest'}
+				]]
+			});
+			
+			table.on('edit(test)', function(obj){
+				var value = obj.value //得到修改后的值
+				,data = obj.data //得到所在行所有键值
+				,field = obj.field; //得到字段
+				layer.msg('[ID: '+ data.id +'] ' + field + ' 字段更改为：'+ value);
+			});
+			
+			table.on('tool(test)', function(obj){
+				var data = obj.data;
+				if(obj.event === 'del'){
+					layer.msg(data.id);
+		//			layer.confirm('真的删除行么', function(index){
+		//				obj.del();
+		//				layer.close(index);
+		//			});
+				} else if(obj.event === 'edit'){
+					layer.msg("直接点击单元格即可编辑");
+				}
+			});
+		
+				var $ = layui.$,
+					active = {
+						reload: function() {
+							var ser_name = $('#ser_name');
+				
+							//执行重载
+							table.reload('testreload', {
+								page: {
+									curr: 1 //重新从第 1 页开始
+								},
+								where: {
+										ser_name: ser_name.val()
+								}
+							});
+						}
+					};
+				
+				$('#search').on('click', function() {
+					var type = $(this).data('type');
+					active[type] ? active[type].call(this) : '';
+				});
+		
+		</script>
+	</body>
+
+</html>

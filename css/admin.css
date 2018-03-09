@@ -1,0 +1,36 @@
+#title{
+	text-align: center;
+}
+
+#title p{
+	font-size: 25px;
+	padding-top: 20px;
+}
+
+#contaner{
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+#search-box{
+	background-color: white;
+	-webkit-box-shadow: 0 0 8px 1px rgba(0,0,0,0.2) ;
+	box-shadow: 0 0 8px 1px rgba(0,0,0,0.2) ;
+}
+
+
+#add-box{
+	background-color: white;
+	-webkit-box-shadow: 0 0 8px 1px rgba(0,0,0,0.2) ;
+	box-shadow: 0 0 8px 1px rgba(0,0,0,0.2) ;
+}
+
+
+input,button{
+	margin: 5px;
+}
+
+
+

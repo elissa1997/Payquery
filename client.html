@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>酬金查询</title>
+		<link rel="stylesheet" href="layui/css/layui.css">
+		<link rel="stylesheet" href="css/client.css">
+		<script src="layui/layui.all.js"></script>
+		<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+		<style>
+			
+		</style>
+	</head>
+	<body>
+		<div class="layui-container">
+			<div class="layui-row">
+				<div class="layui-col-xs12 layui-col-md-offset3 layui-col-md6">
+					
+					<blockquote id="head" class="layui-elem-quote" style="height: 35px;">
+						<div class="layui-col-xs8 layui-col-md8">
+							<div class="layui-inline">
+							    <label class="layui-form-label" style="padding: 9px 5px;width: auto;">选择月份</label>
+							    <div class="layui-input-inline">
+							    	<input type="text" class="layui-input" id="tdate" style="width: 80px;">
+								</div>
+						    </div>
+							
+						</div>
+						
+						<div class="layui-col-xs4 layui-col-md4">
+							<button class="layui-btn layui-btn-normal" id="query" style=" margin-right:10px;float: right;">查询</button>
+						</div>
+					</blockquote>
+					
+					<div id="body">
+						<hr class="layui-bg-blue">
+						<div id="tip">
+							<p>请先输入查询月份</p>
+						</div>
+						<table class="layui-table">
+							<colgroup>
+							    <col width="150">
+							    <col>
+							    <col>
+							</colgroup>
+							<thead>
+							</thead>
+							<tbody id="charu">
+							</tbody>
+						</table>
+						
+						<table class="layui-table">
+							<colgroup>
+							    <col width="80">
+							    <col width="40">
+							    <col width="60">
+							    <col width="60">
+							</colgroup>
+							<thead id="qitacharu1">
+							</thead>
+							<tbody id="qitacharu2">
+							</tbody>
+						</table>
+					</div>
+					
+				</div>		
+			</div>
+		</div>
+	<p></p>
+		
+
+	<script>
+		var laydate = layui.laydate;
+		var myDate = new Date;
+    	var year = myDate.getFullYear();//获取当前年
+    	var yue = myDate.getMonth()+1;//获取当前月
+		laydate.render({
+		    elem: '#tdate'
+		    ,type: 'month'
+		    ,value: year+'-'+yue
+		});
+		
+		if($.cookie('auth') == null){
+			      layer.open({
+			        type: 1
+			        ,title: false //不显示标题栏
+			        ,closeBtn: false
+			        ,area: '300px;'
+			        ,shade: 0.8
+			        ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+			        ,btn: ['点此跳转登录']
+			        ,btnAlign: 'c'
+			        ,moveType: 1 //拖拽模式，0或者1
+			        ,content: '<p><div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300; text-align: center;">您还未登录，请先登录</div></p>'
+			        ,success: function(layero){
+			          var btn = layero.find('.layui-layer-btn');
+			          btn.find('.layui-layer-btn0').attr({
+			            href: 'http://127.0.0.1/4'
+			            ,target: '_self'
+			          });
+			        }
+			      });
+		}else{
+			
+			$('#query').click(function(){
+				var cookie = $.cookie('auth').replace(/\+/g,"%2B");
+				var tdate = $("#tdate").val();
+				if(tdate == ""){
+					layer.msg("请先选择月份")
+				}else{
+					$("#tip").remove();
+					$.ajax({
+						type:"post",
+						url:"php/client.php",
+						cache:false, 
+						data:"cookie="+cookie+"&date="+tdate+"&type=gongzi",
+						dataType:'text',
+						success:function(data){
+								var obj = JSON.parse(data);
+								$("tr").remove();
+								if(obj.length == 0){
+									layer.msg("无查询数据，请更换选择的月份");
+								}else{
+									
+									var name = obj[0].name;
+									var weihukaitong5 = obj[0].weihukaitong5;
+									var ticheng5 = obj[0].ticheng5;
+									var jijian5 = obj[0].jijian5;
+									var choujin = obj[0].choujin;
+									var abcjiben = obj[0].abcjiben;
+									var qita = obj[0].qita;
+									var zongji = obj[0].zongji;
+									$("#charu").append("<tr><td>姓名</td><td>"+name+"</td></tr>");
+									if(weihukaitong5 != "N/A"){
+										$("#charu").append("<tr><td>五级维护开通费</td><td>"+weihukaitong5+"</td></tr>");
+									}
+									if(ticheng5 != "N/A"){
+										$("#charu").append("<tr><td>五级提成</td><td>"+ticheng5+"</td></tr>");
+									}
+									if(jijian5 != "N/A"){
+										$("#charu").append("<tr><td>五级计件</td><td>"+jijian5+"</td></tr>");
+									}
+									if(choujin != "N/A"){
+										$("#charu").append("<tr><td>自有绩效酬金</td><td>"+choujin+"</td></tr>");
+									}
+									if(abcjiben != "N/A"){
+										$("#charu").append("<tr><td>ABC基本工资</td><td>"+abcjiben+"</td></tr>");
+									}
+									if(qita != "N/A"){
+										$("#charu").append("<tr><td>其它奖罚</td><td>"+qita+"<button class='layui-btn layui-btn-normal layui-btn-xs' style='float: right;' id='qita'>详情</button></td></tr>");
+									}
+									$("#charu").append("<tr><td>总计</td><td>"+zongji+"</td></tr>");
+									
+									$('#qita').one("click",function(){
+										$.ajax({
+											type:"post",
+											url:"php/client.php",
+											cache:false, 
+											data:"cookie="+cookie+"&date="+tdate+"&type=xiangqin",
+											dataType:'text',
+											success:function(data){
+												var xiangqin = JSON.parse(data);
+												$("#qitacharu1").append("<tr><th>项目</th><th>金额</th><th>考核人</th><th>考核人电话</th></tr>");
+												for(i=0;i<xiangqin.length;i++){
+													var xiangmu = xiangqin[i].xiangmu;
+													var jiner = xiangqin[i].jiner;
+													var kaoheren = xiangqin[i].kaoheren;
+													var kaohephone = xiangqin[i].kaohephone;
+													$("#qitacharu2").append("<tr><td>"+xiangmu+"</td><td>"+jiner+"</td><td>"+kaoheren+"</td><td>"+kaohephone+"</td></tr>");
+												}
+												$("#qitacharu2").append("<tr><td colspan='4'><p>如有任何异义，请拨打考核人电话</p></td></tr>");
+											}
+										})
+										
+										
+									})
+								}
+
+						}
+					})
+				}
+			})
+			
+		}
+		
+			
+			
+	</script>
+	</body>
+</html>

@@ -1,0 +1,44 @@
+body{
+
+	height: 100vh;
+	background-image:url(../img/bg.jpg) ;
+	background-size:cover;
+	background-attachment: fixed;"
+
+}
+
+#bbs-titl{
+	text-align: center;
+	font-size: 20px;
+}
+
+#titl{
+	padding-top: 30px;
+	padding-bottom: 20px;
+	font: normal normal 40px/1 "微软雅黑", Times, serif;
+	color: rgba(255,255,255,1);
+	text-align: center;
+	-o-text-overflow: clip;
+	text-overflow: clip;
+	text-shadow: 2px 2px 2px rgba(0,0,0,0.5) ;
+}
+#bg{
+	background-color: white;
+	-webkit-box-shadow: 0 0 18px 2px rgba(0,0,0,0.38) ;
+	box-shadow: 0 0 18px 2px rgba(0,0,0,0.38) ;
+	padding: 20px 3%;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-top: 20px;
+	height: 80%;
+}
+#reg-send{
+	margin-left: 5px;
+}
+#subdiv{
+	text-align: center;
+}
+form{
+	margin-top: 10px;
+}
+

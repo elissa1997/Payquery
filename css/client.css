@@ -1,0 +1,34 @@
+body{
+
+	height: 100vh;
+	background-image:url(../img/bg.jpg) ;
+	background-size:cover;
+	background-attachment: fixed;"
+
+}
+
+#head{
+	background-color: white;
+	-webkit-box-shadow: 0 0 18px 2px rgba(0,0,0,0.38) ;
+	box-shadow: 0 0 18px 2px rgba(0,0,0,0.38) ;
+	padding: 20px 3%;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-top: 20px;
+}
+
+#body{
+	background-color: white;
+	-webkit-box-shadow: 0 0 18px 2px rgba(0,0,0,0.38) ;
+	box-shadow: 0 0 18px 2px rgba(0,0,0,0.38) ;
+	padding: 20px 3%;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-top: 20px;
+	height: auto;
+}
+#tip{
+	font-size: 30px;
+	color: rgba(186,186,186,1);
+	text-align: center;
+}
