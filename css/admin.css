@@ -32,5 +32,7 @@ input,button{
 	margin: 5px;
 }
 
+.layui-body{overflow-y: scroll;}
+
 
 

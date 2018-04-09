@@ -26,6 +26,7 @@
 					<blockquote id="bg" class="layui-elem-quote">
 						<p id="bbs-titl">公告板</p>
 						<hr class="layui-bg-blue">
+						<p style="text-align: center;" id="bbsread"></p>
 					</blockquote>
 					
 			</div>
@@ -148,6 +149,18 @@
 		<script src="layui/layui.all.js"></script>
 		<script>
 			$(document).ready(function(){
+				$.ajax({
+					type:"post",
+					url:"php/index_bbs.php",
+					cache:false, 
+					data:"type=getbbs",
+					dataType:'text',
+					success:function(data){
+						var dataobj = JSON.parse(data);
+						var content = dataobj[0].content;
+						$('#bbsread').append(content);
+					}
+				})
 					
 				//----------------------------------------------------------
 				//登录按钮点击事件
@@ -172,11 +185,11 @@
 								var cookie = datobj.cookie;
 								if(statu == "admin"){
 									if(mode == "admin"){
-//										$(window).attr('location','useradmin.html');
+										$(window).attr('location','admin_user.html');
 										layer.msg("管理员进入后台");
 										$.cookie('auth',cookie, { expires: 1, path: '/' });
 									}else if(mode == "user"){
-//										$(window).attr('location','client.html');
+									$(window).attr('location','client.html');
 										layer.msg("管理员进入前台");
 										$.cookie('auth',cookie, { expires: 1, path: '/' });
 									}

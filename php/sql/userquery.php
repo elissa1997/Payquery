@@ -2,11 +2,56 @@
 header("Content-type: text/html; charset=utf-8");
 include ("conn.php");
 
+//用户鉴权检查
+function user_securitycheck($phone,$mode){
+	$check_query = mysql_query("select * from user where phone='$phone' and mode='$mode' limit 1");
+	if($result = mysql_fetch_array($check_query)){
+		return "security";
+	}else{
+		return "noaccess";
+	}
+}
+
+//管理员鉴权检查
+function admin_securitycheck($phone,$mode){
+	$check_query = mysql_query("select * from user where phone='$phone' and mode='$mode' limit 1");
+	if($result = mysql_fetch_array($check_query)){
+		return "security";
+	}else{
+		return "noaccess";
+	}
+}
+
+function admin_add($name,$phone,$password,$mode){
+	$result = mysql_query("insert into user (phone,name,password,mode) values('$phone','$name','$password','$mode')");
+	if($result){
+		echo "success";
+	}else{
+		echo "fail";		
+	}
+}
+
+function admin_del($id){
+	$result = mysql_query("DELETE FROM user WHERE id = '$id'");
+	if($result){
+		echo "success";
+	}else{
+		echo "fail";
+	}
+}
+
+function admin_upd($id,$field,$value){
+	$result = mysql_query("UPDATE user SET $field = '$value' WHERE id='$id'");
+	if($result){
+		echo "success";
+	}else{
+		echo "fail";
+	}
+}
+
 //后台拉取
-function admin_get($li,$pag,$ser_na){
-	$limit = $li;
-	$page = $pag;
-	$ser_name = urldecode($ser_na);
+function admin_get($limit,$page,$ser_name){
+	$ser_name = urldecode($ser_name);
 	$offset = ($page-1)*$limit;
 	if($ser_name == ""){
 		$rs = mysql_query("select * from user limit $offset,$limit");
@@ -32,10 +77,7 @@ function admin_get($li,$pag,$ser_na){
 
 
 //前台登录
-function login($ph,$pd){
-	$phone = $ph;
-	$password = $pd;
-		
+function login($phone,$password){
 	$check_query = mysql_query("select * from user where phone='$phone' and password='$password' limit 1");
 	if($result = mysql_fetch_array($check_query)){
 		$mode = $result["mode"];
@@ -51,11 +93,7 @@ function login($ph,$pd){
 }
 
 //前台注册
-function register($ph,$na,$pa){
-	$phone = $ph;
-	$name = $na;
-	$password = $pa;
-	
+function register($phone,$name,$password){
 	$result = mysql_query("insert into user(phone,name,password,mode) values('$phone','$name','$password','user')");
 	if($result){
 		echo "注册成功";

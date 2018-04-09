@@ -1,8 +1,20 @@
 <?php
 define('ROOT_PATH',dirname(__FILE__));
+include("auth.php");
 include("sql/payquery.php");
+include("sql/userquery.php");
 
-$type = $_REQUEST['type'];
+if(isset($_REQUEST['type'])){
+	$type = $_REQUEST['type'];	
+}else{
+	$type = "";
+}
+
+if(isset($_GET['cookie'])){
+	$cookie = $_GET['cookie'];
+}else{
+	$cookie = "";
+}
 
 if(isset($_GET['limit'])){  
     $limit = $_GET['limit'];  
@@ -77,11 +89,41 @@ if(isset($_POST['adddate'])){
     $adddate = "";  
 }
 
+if(isset($_POST['field'])){  
+    $field = $_POST['field'];  
+}else{  
+    $field = "";  
+}
 
-if($type == "admin_get"){
-	admin_get($limit,$page,$ser_name,$ser_date);
-}else if($type == "admin_add"){
-	admin_add($name,$phone,$weihukaitong5,$ticheng5,$jijian5,$choujin,$abcjiben,$qita,$zongji,$adddate);
+if(isset($_POST['value'])){  
+    $value = $_POST['value'];  
+}else{  
+    $value = "";  
+}
+
+if(isset($_POST['id'])){
+	$id = $_POST['id'];
+}else{
+	$id = "";
+}
+
+$checkmode = "admin";
+
+$checkphone = authcode($cookie,'DECODE',$authkey,0);//cookie解密
+$securitycheck = user_securitycheck($checkphone,$checkmode);
+
+if($securitycheck == "security"){
+	if($type == "admin_get"){
+		payall_admin_get($limit,$page,$ser_name,$ser_date);
+	}else if($type == "admin_add"){
+		payall_admin_add($name,$phone,$weihukaitong5,$ticheng5,$jijian5,$choujin,$abcjiben,$qita,$zongji,$adddate);
+	}else if($type == "admin_del"){
+		payall_admin_del($id);
+	}else if($type == "admin_upd"){
+		payall_admin_upd($id,$field,$value);
+	}
+}else{
+	echo "noaccess";
 }
 
 ?>

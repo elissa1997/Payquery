@@ -1,6 +1,7 @@
 <?php
 define('ROOT_PATH',dirname(__FILE__));
 include ("sql/payquery.php");
+include ("sql/userquery.php");
 include ("auth.php");
 
 if(isset($_POST['cookie'])){  
@@ -21,11 +22,19 @@ if(isset($_POST['type'])){
     $type = "";  
 }
 
-$phone = authcode($cookie,'DECODE',$authkey,0);//cookie解密
+$checkmode = "user";
 
-if($type == "gongzi"){
-	querygongzi($phone,$date);
-}else if($type == "xiangqin"){
-	queryxiangqing($phone,$date);
+$checkphone = authcode($cookie,'DECODE',$authkey,0);//cookie解密
+$securitycheck = user_securitycheck($checkphone,$checkmode);
+
+if($securitycheck == "security"){	
+	if($type == "gongzi"){
+		payall_query($phone,$date);
+	}else if($type == "xiangqin"){
+		paydetail_query($phone,$date);
+	}
+}else{
+	echo "noaccess";
 }
+
 ?>

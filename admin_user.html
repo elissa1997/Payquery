@@ -10,6 +10,7 @@
 		<link rel="stylesheet" href="css/scroll.css">
 		<script src="layui/layui.all.js"></script>
 		<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>		
 	</head>
 
 	<body class="layui-layout-body" style="overflow-y: scroll;">
@@ -26,9 +27,6 @@
 					<li class="layui-nav-item layui-this">
 						<a href="">数据管理</a>
 					</li>
-					<li class="layui-nav-item">
-						<a href="">数据导入与维护</a>
-					</li>
 				</ul>
 			</div>
 
@@ -36,22 +34,17 @@
 				<div class="layui-side-scroll">
 					<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
 					<ul class="layui-nav layui-nav-tree">
-						<li class="layui-nav-item layui-nav-itemed">
-							<a class="" href="javascript:;">报表管理</a>
-							<dl class="layui-nav-child">
-								<dd class="layui-this">
-									<a href="admin_user.html">用户管理</a>
-								</dd>
-								<dd>
-									<a href="admin_payall.html">酬金管理</a>
-								</dd>
-								<dd>
-									<a href="javascript:;">酬金详单管理</a>
-								</dd>
-							</dl>
+						<li class="layui-nav-item layui-this">
+							<a href="admin_user.html">用户管理</a>
 						</li>
 						<li class="layui-nav-item">
-							<a href="javascript:;">数据追加</a>
+							<a href="admin_payall.html">酬金管理</a>
+						</li>
+						<li class="layui-nav-item">
+							<a href="admin_paydetail.html">酬金详单管理</a>
+						</li>
+						<li class="layui-nav-item">
+							<a href="admin_bbs.html">公告板管理</a>
 						</li>
 					</ul>
 				</div>
@@ -79,7 +72,7 @@
 										<input placeholder="新增密码" class="layui-input" id="add_password"  name="password" type="text">
 									</div>
 									<div class="layui-input-inline">
-										<select id="add_mod" name="mod" lay-verify="">
+										<select id="add_mod" name="mode" lay-verify="">
 											<option value="">新增选择身份</option>
 											<option value="user">普通用户</option>
 											<option value="admin">管理员</option>
@@ -133,84 +126,140 @@
 
 		
 		<script>
-			$('#add').click(function(){
-				if(($('#add_name').val() == "")||($('#add_phone').val() == "")||($('#add_password').val() == "")||($('#add_mod').val() == "")){
-					layer.msg("不允许留空");
-				}else{
-					$.ajax({
-						type:"post",
-						url:"php/admin_user.php",
-						cache:false, 
-						data:$("#add-form").serialize()+"&type=admin_add",
-						dataType:'text',
-						success:function(data){
-							if(data == "success"){
-								layer.msg("添加成功");
-								table.reload('testreload', {
-									page: {
-										curr: 1 //重新从第 1 页开始
-									}
-								});
-							}else if(data == "fail"){
-								layer.msg("添加失败，请重试");
+			
+			if($.cookie('auth') == null){
+		      	layer.open({
+			        type: 1
+			        ,title: false //不显示标题栏
+			        ,closeBtn: false
+			        ,area: '300px;'
+			        ,shade: 0.8
+			        ,id: 'LAY_layuipro' //设定一个id，防止重复弹出
+			        ,btn: ['点此跳转登录']
+			        ,btnAlign: 'c'
+			        ,moveType: 1 //拖拽模式，0或者1
+			        ,content: '<p><div style="padding: 50px; line-height: 22px; background-color: #393D49; color: #fff; font-weight: 300; text-align: center;">您还未登录，请先登录</div></p>'
+			        ,success: function(layero){
+			          var btn = layero.find('.layui-layer-btn');
+			          btn.find('.layui-layer-btn0').attr({
+			            href: 'http://127.0.0.1/Payquery'
+			            ,target: '_self'
+			          });
+			        }
+      			});
+			}else{
+				var cookie = $.cookie('auth').replace(/\+/g,"%2B");
+			
+				$('#add').click(function(){
+					if(($('#add_name').val() == "")||($('#add_phone').val() == "")||($('#add_password').val() == "")||($('#add_mod').val() == "")){
+						layer.msg("不允许留空");
+					}else{
+						$.ajax({
+							type:"post",
+							url:"php/admin_user.php?type=admin_add&cookie="+cookie,
+							cache:false, 
+							data:$("#add-form").serialize(),
+							dataType:'text',
+							success:function(data){
+								if(data == "success"){
+									layer.msg("添加成功");
+									table.reload('testreload', {
+										page: {
+											curr: 1 //重新从第 1 页开始
+										}
+									});
+								}else if(data == "fail"){
+									layer.msg("添加失败，请重试");
+								}
 							}
-						}
-					});
-				}
-			})
+						});
+					}
+				})
+				
+				$('#rest').click(function(){
+					$(':input','#add-form').val(''); 
+					$(':selection','#add-form').val(''); 
+				})
+				
+				
+				var table = layui.table;	
+				table.render({
+					elem: '#demo'
+					,id: 'testreload'
+					,cellMinWidth: 80
+					,height: 'full-310'
+					,url: 'php/admin_user.php?type=admin_get&cookie='+cookie //数据接口
+					,page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+					    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+					      //,curr: 5 //设定初始在第 5 页
+					    ,groups: 3 //只显示 1 个连续页码
+					    ,first: false //不显示首页
+					    ,last: false //不显示尾页
+					    ,limit: 50
+					    ,limits:[50,100,150,200]
+			   		}	
+					,cols: [[ //表头
+						{field: 'id', title: 'ID', width:60 ,sort: true, fixed: 'left'}
+						,{field: 'name', title: '姓名', edit: 'text'}
+						,{field: 'phone', title: '手机号', edit: 'text'}
+						,{field: 'password', title: '密码', edit: 'text'} 
+						,{field: 'mode', title: '身份（user为普通用户，admin为管理员）', edit: 'text'}
+						,{fixed: 'right', title: '操作', width:140 ,align:'center', toolbar: '#bartest'}
+					]]
+				});
+				
+				table.on('edit(test)', function(obj){
+					var value = obj.value //得到修改后的值
+					,data = obj.data //得到所在行所有键值
+					,field = obj.field; //得到字段
+					$.ajax({
+							type:"post",
+							url:"php/admin_user.php?type=admin_upd&cookie="+cookie,
+							cache:false, 
+							data:"id="+data.id+"&field="+field+"&value="+value,
+							dataType:'text',
+							success:function(data){
+								if(data == "success"){
+									layer.msg("修改成功");
+									table.reload('testreload', {
+										page: {
+											curr: 1 //重新从第 1 页开始
+										}
+									});
+								}else if(data == "fail"){
+									layer.msg("修改失败，请重试");
+								}
+							}
+					});	
+				});
+				
+				table.on('tool(test)', function(obj){
+					var data = obj.data;
+					if(obj.event === 'del'){
+						layer.msg(data.id);
+						layer.confirm('真的删除行么', function(index){
+							$.ajax({
+								type:"post",
+								url:"php/admin_user.php?type=admin_del&cookie="+cookie,
+								cache:false, 
+								data:"id="+data.id,
+								dataType:'text',
+								success:function(data){
+									if(data == "success"){
+										layer.msg("删除成功");
+										obj.del();
+									}else if(data == "fail"){
+										layer.msg("删除失败，请重试");
+									}
+								}
+							});	
+							layer.close(index);
+						});
+					} else if(obj.event === 'edit'){
+						layer.msg("直接点击单元格即可编辑");
+					}
+				});
 			
-			$('#rest').click(function(){
-				$(':input','#add-form').val(''); 
-				$(':selection','#add-form').val(''); 
-			})
-			
-			
-			var table = layui.table;	
-			table.render({
-				elem: '#demo'
-				,id: 'testreload'
-				,cellMinWidth: 80
-				,height: 'full-310'
-				,url: 'php/admin_user.php?type=admin_get' //数据接口
-				,page: { //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
-				    layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
-				      //,curr: 5 //设定初始在第 5 页
-				    ,groups: 3 //只显示 1 个连续页码
-				    ,first: false //不显示首页
-				    ,last: false //不显示尾页
-				    ,limit: 50
-				    ,limits:[50,100,150,200]
-		   		}	
-				,cols: [[ //表头
-					{field: 'id', title: 'ID', width:60 ,sort: true, fixed: 'left'}
-					,{field: 'name', title: '姓名', edit: 'text'}
-					,{field: 'phone', title: '手机号', edit: 'text'}
-					,{field: 'password', title: '密码', edit: 'text'} 
-					,{field: 'mode', title: '身份（user为普通用户，admin为管理员）', edit: 'text'}
-					,{fixed: 'right', title: '操作', width:140 ,align:'center', toolbar: '#bartest'}
-				]]
-			});
-			
-			table.on('edit(test)', function(obj){
-				var value = obj.value //得到修改后的值
-				,data = obj.data //得到所在行所有键值
-				,field = obj.field; //得到字段
-				layer.msg('[ID: '+ data.id +'] ' + field + ' 字段更改为：'+ value);
-			});
-			
-			table.on('tool(test)', function(obj){
-				var data = obj.data;
-				if(obj.event === 'del'){
-					layer.msg(data.id);
-		//			layer.confirm('真的删除行么', function(index){
-		//				obj.del();
-		//				layer.close(index);
-		//			});
-				} else if(obj.event === 'edit'){
-					layer.msg("直接点击单元格即可编辑");
-				}
-			});
-		
 				var $ = layui.$,
 					active = {
 						reload: function() {
@@ -232,6 +281,8 @@
 					var type = $(this).data('type');
 					active[type] ? active[type].call(this) : '';
 				});
+				
+			}
 		
 		</script>
 	</body>
