@@ -29,9 +29,9 @@ $securitycheck = user_securitycheck($checkphone,$checkmode);
 
 if($securitycheck == "security"){	
 	if($type == "gongzi"){
-		payall_query($phone,$date);
+		payall_query($checkphone,$date);
 	}else if($type == "xiangqin"){
-		paydetail_query($phone,$date);
+		paydetail_query($checkphone,$date);
 	}
 }else{
 	echo "noaccess";
