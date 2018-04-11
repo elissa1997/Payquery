@@ -1,5 +1,4 @@
 <?php
-header("Content-type: text/html; charset=utf-8");
 include ("conn.php");
 
 //用户鉴权检查

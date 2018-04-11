@@ -22,6 +22,16 @@ body{
 	text-overflow: clip;
 	text-shadow: 2px 2px 2px rgba(0,0,0,0.5) ;
 }
+#bg-bbs{
+	background-color: white;
+	-webkit-box-shadow: 0 0 18px 2px rgba(0,0,0,0.38) ;
+	box-shadow: 0 0 18px 2px rgba(0,0,0,0.38) ;
+	padding: 20px 3%;
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-top: 20px;
+	height: 80%;
+}
 #bg{
 	background-color: white;
 	-webkit-box-shadow: 0 0 18px 2px rgba(0,0,0,0.38) ;
@@ -30,6 +40,7 @@ body{
 	margin-left: 10px;
 	margin-right: 10px;
 	margin-top: 20px;
+	margin-bottom: 30px;
 	height: 80%;
 }
 #reg-send{
@@ -40,5 +51,19 @@ body{
 }
 form{
 	margin-top: 10px;
+}
+
+.layui-container{min-height: 100%;}
+
+.foot {
+	clear: both; /* 清除浮动元素格式 */  
+	position: relative;  
+	margin-top: -100px; /* Footer 高度的负值 */  
+	height: 100px;  
+	text-align: center;
+}
+
+.foot p{
+	padding-top: 20px;
 }
 

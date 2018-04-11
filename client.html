@@ -7,7 +7,7 @@
 		<link rel="stylesheet" href="layui/css/layui.css">
 		<link rel="stylesheet" href="css/client.css">
 		<script src="layui/layui.all.js"></script>
-		<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
 		<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 		<style>
 			
@@ -74,7 +74,12 @@
 				</div>		
 			</div>
 		</div>
-	<p></p>
+	
+	
+	<div class="foot layui-bg-cyan">
+		<p>皖ICP备16002760号-2</p>
+		<p>@ elissa</p>
+	</div>
 		
 
 	<script>
@@ -103,7 +108,7 @@
 			        ,success: function(layero){
 			          var btn = layero.find('.layui-layer-btn');
 			          btn.find('.layui-layer-btn0').attr({
-			            href: 'http://127.0.0.1/Payquery'
+			            href: 'http://www.lingbi10000.top'
 			            ,target: '_self'
 			          });
 			        }
@@ -122,9 +127,9 @@
 						url:"php/client.php",
 						cache:false, 
 						data:"cookie="+cookie+"&date="+tdate+"&type=gongzi",
-						dataType:'text',
+						dataType:'json',
 						success:function(data){
-								var obj = JSON.parse(data);
+								var obj = data;
 								$("tr").remove();
 								if(obj.length == 0){
 									layer.msg("无查询数据，请更换选择的月份");

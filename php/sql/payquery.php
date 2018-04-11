@@ -1,6 +1,6 @@
 <?php
 include ("conn.php");
-
+header('Content-type: application/json');
 //后台拉取
 function payall_admin_get($limit,$page,$ser_name,$ser_date){
 	$ser_name = urldecode($ser_name);
@@ -109,7 +109,7 @@ function payall_query($phone,$date){
 	while($row = mysql_fetch_object($rs)){
 	    array_push($result, $row);
 	}
-	echo json_encode($result);
+    echo json_encode($result);
 }
 
 //前台用户查询详单

@@ -25,6 +25,7 @@ body{
 	margin-left: 10px;
 	margin-right: 10px;
 	margin-top: 20px;
+	margin-bottom: 30px;
 	height: auto;
 }
 #tip{
@@ -41,4 +42,18 @@ body{
 	-o-text-overflow: clip;
 	text-overflow: clip;
 	text-shadow: 2px 2px 2px rgba(0,0,0,0.5) ;
+}
+
+.layui-container{min-height: 100%;}
+
+.foot {
+	clear: both; /* 清除浮动元素格式 */  
+	position: relative;  
+	margin-top: -100px; /* Footer 高度的负值 */  
+	height: 100px;  
+	text-align: center;
+}
+
+.foot p{
+	padding-top: 20px;
 }
